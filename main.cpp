@@ -25,12 +25,16 @@ int Battle_PlayerAction_Attack (PLAYER* p, ENEMY* e) {
 	//Player Attack
 	Print_Slow("You attack the goblin!\n", 100);
 	e->HP -= p->ATK - e->DEF; //Enemy HP = Player ATK - Enemy DEF
-	printf("The mob's HP is now %d\n", e->HP);
+	printf("The mob's HP is now %d\n", e->HP >= 0 ? e->HP : 0);
+	
+	if (e->HP <= 0) {
+		return Battle_ResultCalculation(p, e);
+	}
 	
 	//Enemy Attack
 	Print_Slow("The goblin attack back!\n", 100);
 	p->HP -= e->ATK - p->DEF; //Player HP = Enemy ATK - Player DEF
-	printf("The player's HP is now %d\n", p->HP);
+	printf("The player's HP is now %d\n", p->HP >= 0 ? p->HP : 0);
 	
 	return Battle_ResultCalculation(p, e);
 }
@@ -104,6 +108,18 @@ void Game_Console_Setting () {
  
 	FreeLibrary(hmodule);
 }
+
+void Game_Console_Scroll () {
+	CONSOLE_SCREEN_BUFFER_INFO scbi;
+	SMALL_RECT sr = {0, 0, 0, 0};
+	
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &scbi);
+	
+	sr.Top = scbi.dwCursorPosition.Y - scbi.srWindow.Top - 1;
+	sr.Bottom = scbi.dwCursorPosition.Y - scbi.srWindow.Top - 1;
+	
+	SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), false, &sr);
+}
 	
 void Game_Start (const char* cmd) {
 	char answer[100];
@@ -167,7 +183,6 @@ void Game_Event_Random_Enemy (PLAYER* p) {
 			case 3: {	//Run
 				if (result == 1) {
 					Print_Slow("YOU WIN!\n", 100);
-					p->GAME_OVER = true;
 				} else if (result == 3) {
 					Print_Slow("you escaped from that room\n", 100);
 				}
@@ -443,6 +458,7 @@ int main() {
 	Move_Description();
 	while (player.GAME_OVER == false) {
 		Move_GetUserInput(userInput);
+		Game_Console_Scroll();
 		Move_CommandCheck(userInput, &player, &map);
 		Map_Print(player.LOCATION, &map);
 	}

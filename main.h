@@ -57,6 +57,7 @@
 	
 	//Game Elements
 	void Game_Console_Setting (); //Set Console Property
+	void Game_Console_Scroll (); //Console Scrolling
 	void Game_Start (const char* cmd); //Game Start with 'cmd' Command
 	void Game_Description (); //Print Game's Description
 	
