@@ -2,7 +2,6 @@
 	#define _main
 	
 	//Definition
-	#define GAME_TITLE "Dungeon"
 	#define ID_ICON 1
 	
 	//Include Standard
@@ -11,6 +10,9 @@
 	#include <string.h>
 	#include <time.h>
 	#include <Windows.h>
+	
+	//Include Custom
+	#include "text.h"
 	
 	//Global Elements
 	#define map(m, x, y) m->map[(y - (m->bound_y - 1)) * -1][x] //Represent 'map' data as a coordinate plane
@@ -42,6 +44,11 @@
 	} MAP;
 	
 	void Print_Slow (const char* str, int delay); //Print 'str' one character at each 'delay' millisecond
+	#define Printf_Slow(s, d, ...) {char *tempStr = (char*)calloc(strlen(s) + 20, sizeof(char)); \
+													sprintf(tempStr, s, __VA_ARGS__); \
+													Print_Slow(tempStr, d); \
+													free(tempStr); \
+													}
 	
 	//Battle Elements
 	#define Battle_ValidAction(act) (act >= 0 && act <= 2) //Check if 'act' is within the correct bounds (0~2)

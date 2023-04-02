@@ -23,18 +23,18 @@ int Battle_ResultCalculation (PLAYER* p, ENEMY* e) {
 
 int Battle_PlayerAction_Attack (PLAYER* p, ENEMY* e) {
 	//Player Attack
-	Print_Slow("You attack the goblin!\n", 100);
+	Print_Slow(BATTLE_ATTACK_1, 100);
 	e->HP -= p->ATK - e->DEF; //Enemy HP = Player ATK - Enemy DEF
-	printf("The mob's HP is now %d\n", e->HP >= 0 ? e->HP : 0);
+	Printf_Slow(BATTLE_ATTACK_2, 100, e->HP >= 0 ? e->HP : 0);
 	
 	if (e->HP <= 0) {
 		return Battle_ResultCalculation(p, e);
 	}
 	
 	//Enemy Attack
-	Print_Slow("The goblin attack back!\n", 100);
+	Print_Slow(BATTLE_ATTACK_ENEMY_1, 100);
 	p->HP -= e->ATK - p->DEF; //Player HP = Enemy ATK - Player DEF
-	printf("The player's HP is now %d\n", p->HP >= 0 ? p->HP : 0);
+	Printf_Slow(BATTLE_ATTACK_ENEMY_2, 100, p->HP >= 0 ? p->HP : 0);
 	
 	return Battle_ResultCalculation(p, e);
 }
@@ -42,24 +42,24 @@ int Battle_PlayerAction_Attack (PLAYER* p, ENEMY* e) {
 int Battle_PlayerAction_Heal (PLAYER* p, ENEMY* e) {
 	if (p->MP >= 3) {
 		//Player Heal (Cost 3)
-		Print_Slow("You cast heal!\n", 100);
+		Print_Slow(BATTLE_HEAL_1, 100);
 		p->HP += 5;
 		p->MP -= 3;
 		
-		Print_Slow("Your HP is now ", 100); printf("%d\n", p->HP);
-		Print_Slow("Your MP is now ", 100); printf("%d\n", p->MP);
+		Printf_Slow(BATTLE_HEAL_2, 100, p->HP);
+		Printf_Slow(BATTLE_HEAL_3, 100, p->MP);
 		
 		puts("");
 		//Enemy Attack
-		Print_Slow("The goblin attack back!\n", 100);
+		Print_Slow(BATTLE_ATTACK_ENEMY_1, 100);
 		
 		p->HP -= e->ATK - p->DEF;
-		printf("The player's HP is now %d\n", p->HP);
+		Printf_Slow(BATTLE_ATTACK_ENEMY_2, 100, p->HP);
 		return Battle_ResultCalculation(p, e);
 	} else {
 		//Not Enought Cost
-		Print_Slow("You don't have enoguh MP\n", 100);
-		Print_Slow("Your MP is ", 100); printf("%d\n", p->MP);
+		Print_Slow(BATTLE_HEAL_FAIL_1, 100);
+		Printf_Slow(BATTLE_HEAL_FAIL_2, 100, p->MP);
 	}
 	return 0;
 }
@@ -78,8 +78,8 @@ void Battle_Action_Initialization () {
 void Battle_GetUserInput (int* act) {
 	char cmd[100];
 	
-	puts("1: Attack, 2: Heal[Cost MP: 3], 3: Run"); //Execution is 0, 1, 2
-	printf("Command: ");
+	puts(BATTLE_INPUT_1); //Execution is 0, 1, 2
+	printf(BATTLE_INPUT_2);
 	gets(cmd);
 	
 	*act = atoi(cmd) - 1; //String Command To Integer
@@ -124,43 +124,43 @@ void Game_Console_Scroll () {
 void Game_Start (const char* cmd) {
 	char answer[100];
 	
-	Print_Slow("you wake up in the strange kitchen\n", 100);
-	Print_Slow("enter the \"", 100); Print_Slow(cmd, 100); Print_Slow("\" to search this room\n", 100);
+	Print_Slow(GAME_START_1, 100);
+	Printf_Slow(GAME_START_2, 100, cmd);
 	
 	while (true) {
 		gets(answer);
 		if (stricmp(answer, cmd) == 0) {
-			puts("searching...\n");
+			puts(GAME_START_3);
 			Sleep(3000);
-			Print_Slow("You found the map that placed on the wall\n\n", 100);
+			Print_Slow(GAME_START_4, 100);
 			return;
 		}
 	}
 }
 
 void Game_Description () {
-	Print_Slow("your location is P\n", 100);
-	Print_Slow("? is random encounter\n", 100);
-	Print_Slow("@ is exit\n\n", 100);
-	Print_Slow("to escape from dungeon you need key and the key is came from k location in the map\n\n", 100);
+	Print_Slow(GAME_DESCRIPTION_1, 100);
+	Print_Slow(GAME_DESCRIPTION_2, 100);
+	Print_Slow(GAME_DESCRIPTION_3, 100);
+	Print_Slow(GAME_DESCRIPTION_4, 100);
 }
 
 void Game_Event_Random_Treasure_Ring (PLAYER* p) {
-	Print_Slow("You found treasure box!\n", 100);
-	Print_Slow("It contains ring of brave!\n", 100);
-	Print_Slow("ATK +3!\n", 10);
+	Print_Slow(RANDOM_EVENT_RING_1, 100);
+	Print_Slow(RANDOM_EVENT_RING_2, 100);
+	Print_Slow(RANDOM_EVENT_RING_3, 10);
 	p->ATK += 3;
 	
-	printf("Your ATK is now %d\n", p->ATK);
+	Printf_Slow(RANDOM_EVENT_RING_4, 100, p->ATK);
 }
 
 void Game_Event_Random_Treasure_Armor (PLAYER* p) {
-	Print_Slow("You found treasure box!\n", 100);
-	Print_Slow("It contains armor!\n", 100);
-	Print_Slow("DEF +3!\n", 10);
+	Print_Slow(RANDOM_EVENT_ARMOR_1, 100);
+	Print_Slow(RANDOM_EVENT_ARMOR_2, 100);
+	Print_Slow(RANDOM_EVENT_ARMOR_3, 10);
 	p->DEF += 3;
 	
-	printf("Your DEF is now %d\n", p->DEF);
+	Printf_Slow(RANDOM_EVENT_ARMOR_4, 100, p->DEF);
 }
 
 void Game_Event_Random_Enemy (PLAYER* p) {
@@ -168,11 +168,11 @@ void Game_Event_Random_Enemy (PLAYER* p) {
 	int act;
 	int result;
 	
-	Print_Slow("you encountered enemy! enter the number of your action\n", 100);
+	Print_Slow(RANDOM_EVENT_ENEMY_1, 100);
 	while (true) {
 		Battle_GetUserInput(&act);
 		if (!Battle_ValidAction(act)) {
-			puts("Invalid action.\n");
+			puts(RANDOM_EVENT_ENEMY_2);
 			continue;
 		}
 		result = Battle_PlayerAction[act](p, &mob);
@@ -182,15 +182,15 @@ void Game_Event_Random_Enemy (PLAYER* p) {
 			case 1: 	//Win
 			case 3: {	//Run
 				if (result == 1) {
-					Print_Slow("YOU WIN!\n", 100);
+					Print_Slow(RANDOM_EVENT_ENEMY_3, 100);
 				} else if (result == 3) {
-					Print_Slow("you escaped from that room\n", 100);
+					Print_Slow(RANDOM_EVENT_ENEMY_4, 100);
 				}
-				Print_Slow("you exit from that room and the room collapse\n", 100);
+				Print_Slow(RANDOM_EVENT_ENEMY_5, 100);
 				return;
 			}
 			case 2: { //Lose
-				Print_Slow("YOU LOSE\n", 100);
+				Print_Slow(RANDOM_EVENT_ENEMY_6, 100);
 				p->GAME_OVER = true;
 				return;
 			}
@@ -199,8 +199,8 @@ void Game_Event_Random_Enemy (PLAYER* p) {
 }
 
 void Game_Event_Random_Nothing (PLAYER* p) {
-	Print_Slow("there was nothing in the room\n", 100);
-	Print_Slow("you exit from that room and the room collapse\n", 100);
+	Print_Slow(RANDOM_EVENT_NOTHING_1, 100);
+	Print_Slow(RANDOM_EVENT_NOTHING_2, 100);
 }
 
 void Game_Event_Random_Initialization () {
@@ -219,22 +219,22 @@ void Game_Event_Random (PLAYER* p, MAP* map) {
 
 void Game_Event_OpenDoor (PLAYER* p) {
 	if (p->KEY > 0) { // If key > 0 (Door Open)
-		Print_Slow("The key just fit to the door keyhole!\n", 100);
-		Print_Slow("You escape from that dungeon!\n", 100);
+		Print_Slow(EVENT_DOOR_1, 100);
+		Print_Slow(EVENT_DOOR_2, 100);
 		p->GAME_OVER = true;
 	} else { // key <= 0
-		Print_Slow("you don't have any key so you cannot get out from here!\n", 100);
+		Print_Slow(EVENT_DOOR_FAIL, 100);
 	}
 }
 
 void Game_Event_FindKey (PLAYER* p, MAP* map) {
-	puts("You found the key!");
+	Print_Slow(EVENT_KEY, 100);
 	p->KEY++;
 	map(map, p->LOCATION.X, p->LOCATION.Y) = '0';
 }
 
 void Game_Event_Default () {
-	Print_Slow("You walk to another room.\n", 100);
+	Print_Slow(EVENT_DEFAULT, 100);
 }
 
 //Map Elements
@@ -383,22 +383,22 @@ void Map_Clear (MAP* map) {
 }
 //Move Elements
 void Move_Description () {
-	Print_Slow("you can move in four direction.\n", 100);
+	Print_Slow(MOVE_DESCRIPTION, 100);
 	Sleep(1000);
 }
 
 void Move_GetUserInput (char* output) {
-	printf("Enter the direction.(up, down, left, right): ");
+	printf(MOVE_INPUT);
 	gets(output);
 }
 
 bool Move_LocationValid (COORD check_loc, MAP* map) {
 	if (map(map, check_loc.X, check_loc.Y) == 'x') {
-		Print_Slow("you tried to go to the direction but wall blocked you\n", 100);
+		Print_Slow(MOVE_VALID_1, 100);
 		return false;
 	}
 	if (!Move_LocationInBoundary(check_loc.X, check_loc.Y, map->bound_x, map->bound_y)) {
-		Print_Slow("you cannot go through the fourth wall\n", 100);
+		Print_Slow(MOVE_VALID_2, 100);
 		return false;
 	}
 	return true;
@@ -418,7 +418,7 @@ void Move_CommandCheck (char* cmd, PLAYER* p, MAP* map) {
 	} else if (Move_Direction(cmd, "right")) {
 		temp_loc.X++;
 	} else {
-		puts("Invalid direction.");
+		puts(MOVE_CHECK);
 		return;
 	}
 	
