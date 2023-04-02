@@ -84,6 +84,27 @@ void Battle_GetUserInput (int* act) {
 //Game Elements
 void (*Game_Event_Random_Function[4])(PLAYER*);
 
+void Game_Console_Setting () {
+	LONG style = GetWindowLong(GetConsoleWindow(), GWL_STYLE);
+	
+	//Disable Maximize, Sizing
+	style &= ~(WS_SIZEBOX | WS_MAXIMIZEBOX);
+	SetWindowLong(GetConsoleWindow(), GWL_STYLE, style);
+	
+	//Set Game Title
+	SetConsoleTitle(GAME_TITLE);
+	
+	//Set Game Icon
+	HMODULE hmodule = LoadLibrary("Kernel32.dll");
+	HICON icon = (HICON)MAKEINTRESOURCE(ID_ICON);
+	
+	typedef DWORD (*SCI)(HICON);
+	SCI SetConsoleIcon = (SCI)GetProcAddress(hmodule, "SetConsoleIcon");
+	SetConsoleIcon(icon); 
+ 
+	FreeLibrary(hmodule);
+}
+	
 void Game_Start (const char* cmd) {
 	char answer[100];
 	
@@ -92,8 +113,7 @@ void Game_Start (const char* cmd) {
 	
 	while (true) {
 		gets(answer);
-		strlwr(answer);
-		if (strcmp(answer, cmd) == 0) {
+		if (stricmp(answer, cmd) == 0) {
 			puts("searching...\n");
 			Sleep(3000);
 			Print_Slow("You found the map that placed on the wall\n\n", 100);
@@ -398,6 +418,7 @@ void Move_CommandCheck (char* cmd, PLAYER* p, MAP* map) {
 
 //Inits
 void Initialization () {
+	Game_Console_Setting();
 	Game_Event_Random_Initialization();
 	Battle_Action_Initialization();
 }

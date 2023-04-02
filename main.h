@@ -1,10 +1,14 @@
 #ifndef _main
 	#define _main
 	
+	//Definition
+	#define GAME_TITLE "Dungeon"
+	#define ID_ICON 1
+	
 	//Include Standard
 	#include <stdio.h>
 	#include <stdlib.h>
-	#include <string>
+	#include <string.h>
 	#include <time.h>
 	#include <Windows.h>
 	
@@ -52,6 +56,7 @@
 	void Battle_GetUserInput (int* act); //Get User Input For Battle (1~3)
 	
 	//Game Elements
+	void Game_Console_Setting (); //Set Console Property
 	void Game_Start (const char* cmd); //Game Start with 'cmd' Command
 	void Game_Description (); //Print Game's Description
 	
