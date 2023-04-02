@@ -334,7 +334,7 @@ void Map_EventExecute (PLAYER *p, MAP* map) {
 		Game_Event_OpenDoor(p);
 		return;
 	}
-	if (map(map, p->LOCATION.X, p->LOCATION.Y) == 'k') {
+	if (map(map, p->LOCATION.X, p->LOCATION.Y) == 'K') {
 		Game_Event_FindKey(p, map);
 		return;
 	}
@@ -447,7 +447,7 @@ int main() {
 	Initialization();
 	Map_Create_Macro((&map), 5, 5, {{'x', '0', '0', '0', '0'},
 															{'?', '0', 'x', 'x', '@'},
-															{'x', '0', '0', 'k', 'x'},
+															{'x', '0', '0', 'K', 'x'},
 															{'x', '0', 'x', 'x', '?'},
 															{'0', '0', '0', '0', '0'}});
 	Game_Start("Search");
