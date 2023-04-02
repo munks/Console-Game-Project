@@ -130,9 +130,11 @@ void Game_Start (const char* cmd) {
 	while (true) {
 		gets(answer);
 		if (stricmp(answer, cmd) == 0) {
-			puts(GAME_START_3);
-			Sleep(3000);
-			Print_Slow(GAME_START_4, 100);
+			printf(GAME_START_3);
+			Sleep(1000);
+			Print_Slow(GAME_START_4, 1000);
+			puts("\n");
+			Print_Slow(GAME_START_5, 100);
 			return;
 		}
 	}

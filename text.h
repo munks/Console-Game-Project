@@ -6,14 +6,15 @@
 	//void Game_Start (const char* cmd);
 	#define GAME_START_1				"You woke up in the strange kitchen.\n"
 	#define GAME_START_2				"Enter the \"%s\" to search this room.\n" //%s(cmd)
-	#define GAME_START_3				"Searching...\n"
-	#define GAME_START_4				"You found the map that placed on the wall.\n\n"
+	#define GAME_START_3				"Searching"
+	#define GAME_START_4				"..."
+	#define GAME_START_5				"You found the map that placed on the wall.\n\n"
 	
 	//void Game_Description ();
 	#define GAME_DESCRIPTION_1			"Your location is P.\n"
 	#define GAME_DESCRIPTION_2			"? is random encounter.\n"
 	#define GAME_DESCRIPTION_3			"@ is exit.\n\n"
-	#define GAME_DESCRIPTION_4			"To escape from dungeon you need Key, Key can be obtained from K location in the map.\n\n"
+	#define GAME_DESCRIPTION_4			"To escape from dungeon, you need Key. Key can be obtained from K location in the map.\n\n"
 	
 	//void Move_Description ();
 	#define MOVE_DESCRIPTION			"You can move in four direction.\n"
