@@ -92,6 +92,7 @@ void Game_Start (const char* cmd) {
 	
 	while (true) {
 		gets(answer);
+		strlwr(answer);
 		if (strcmp(answer, cmd) == 0) {
 			puts("searching...\n");
 			Sleep(3000);
@@ -370,6 +371,8 @@ bool Move_LocationValid (COORD check_loc, MAP* map) {
 
 void Move_CommandCheck (char* cmd, PLAYER* p, MAP* map) {
 	COORD temp_loc = p->LOCATION;
+	
+	strlwr(cmd);
 	
 	if (Move_Direction(cmd, "up")) {
 		temp_loc.Y++;
