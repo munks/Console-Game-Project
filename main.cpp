@@ -1,11 +1,67 @@
 #include "main.h"
 
 //Global Elements
+int State_Flag = 0;
+unsigned char Global_Input = 0;
+
 void Print_Slow (const char* str, int delay) {
+	State_Flag_Off(State_Print_Skip);
 	for (int i = 0; i < strlen(str); i++) {
 		printf("%c", str[i]);
-		Sleep(delay);
+		if (!State_Flag_Check(State_Print_Skip)) {
+			Sleep(delay);
+		}
 	}
+}
+
+void Input_Process (unsigned char input, bool special) {
+	switch (input) {
+		//Print_Slow Skip
+		case '\r': {
+			State_Flag_On(State_Print_Skip);
+			break;
+		}
+		//Battle Input Confirm
+		case '1':
+		case '2':
+		case '3': {
+			State_Flag_On(State_Input_Battle);
+			break;
+		}
+		//Game Start Input Confirm
+		case 's':
+		case 'S': {
+			State_Flag_On(State_Input_Start);
+			break;
+		}
+		//move Input Confirm
+		case 'l':
+		case 'L':
+		case 'r':
+		case 'R':
+		case 'u':
+		case 'U':
+		case 'd':
+		case 'D': {
+			State_Flag_On(State_Input_Move);
+			break;
+		}
+	}
+}
+
+DWORD State_Input (PVOID param) {
+	bool special;
+	
+	while (true) {
+		special = false;
+		Global_Input = _getch();
+		if (Global_Input == 0x00 || Global_Input == 0xE0) {
+			special = true;
+			Global_Input = _getch();
+		}
+		Input_Process(Global_Input, special);
+	}
+	return 0;
 }
 
 //Battle Elements
@@ -28,6 +84,7 @@ int Battle_PlayerAction_Attack (PLAYER* p, ENEMY* e) {
 	Printf_Slow(BATTLE_ATTACK_2, 100, e->HP >= 0 ? e->HP : 0);
 	
 	if (e->HP <= 0) {
+		puts("");
 		return Battle_ResultCalculation(p, e);
 	}
 	
@@ -35,7 +92,7 @@ int Battle_PlayerAction_Attack (PLAYER* p, ENEMY* e) {
 	Print_Slow(BATTLE_ATTACK_ENEMY_1, 100);
 	p->HP -= e->ATK - p->DEF; //Player HP = Enemy ATK - Player DEF
 	Printf_Slow(BATTLE_ATTACK_ENEMY_2, 100, p->HP >= 0 ? p->HP : 0);
-	
+	puts("");
 	return Battle_ResultCalculation(p, e);
 }
 
@@ -76,13 +133,12 @@ void Battle_Action_Initialization () {
 }
 
 void Battle_GetUserInput (int* act) {
-	char cmd[100];
+	Print_Slow(BATTLE_INPUT_1, 10); //Execution is 0, 1, 2
 	
-	puts(BATTLE_INPUT_1); //Execution is 0, 1, 2
-	printf(BATTLE_INPUT_2);
-	gets(cmd);
+	Get_Global_Input(State_Input_Battle);
+	Set_Global_Input(act, int);
 	
-	*act = atoi(cmd) - 1; //String Command To Integer
+	*act -= 0x31; //Command('1','2','3') To Act(0,1,2)
 }
 
 //Game Elements
@@ -115,29 +171,23 @@ void Game_Console_Scroll () {
 	
 	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &scbi);
 	
-	sr.Top = scbi.dwCursorPosition.Y - scbi.srWindow.Top - 1;
-	sr.Bottom = scbi.dwCursorPosition.Y - scbi.srWindow.Top - 1;
+	sr.Top = scbi.dwCursorPosition.Y - scbi.srWindow.Top;
+	sr.Bottom = scbi.dwCursorPosition.Y - scbi.srWindow.Top;
 	
 	SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), false, &sr);
 }
 	
-void Game_Start (const char* cmd) {
-	char answer[100];
-	
+void Game_Start () {
 	Print_Slow(GAME_START_1, 100);
-	Printf_Slow(GAME_START_2, 100, cmd);
+	Print_Slow(GAME_START_2, 100);
 	
-	while (true) {
-		gets(answer);
-		if (stricmp(answer, cmd) == 0) {
-			printf(GAME_START_3);
-			Sleep(1000);
-			Print_Slow(GAME_START_4, 1000);
-			puts("\n");
-			Print_Slow(GAME_START_5, 100);
-			return;
-		}
-	}
+	Get_Global_Input(State_Input_Start); //Get 's' Input
+	
+	printf(GAME_START_3);
+	Sleep(1000);
+	Print_Slow(GAME_START_4, 1000);
+	puts("\n");
+	Print_Slow(GAME_START_5, 100);
 }
 
 void Game_Description () {
@@ -386,38 +436,38 @@ void Map_Clear (MAP* map) {
 //Move Elements
 void Move_Description () {
 	Print_Slow(MOVE_DESCRIPTION, 100);
-	Sleep(1000);
 }
 
 void Move_GetUserInput (char* output) {
 	printf(MOVE_INPUT);
-	gets(output);
+	Get_Global_Input(State_Input_Move);
+	Set_Global_Input(output, char);
 }
 
 bool Move_LocationValid (COORD check_loc, MAP* map) {
-	if (map(map, check_loc.X, check_loc.Y) == 'x') {
+	if (!Move_LocationInBoundary(check_loc.X, check_loc.Y, map->bound_x, map->bound_y)) {
 		Print_Slow(MOVE_VALID_1, 100);
 		return false;
 	}
-	if (!Move_LocationInBoundary(check_loc.X, check_loc.Y, map->bound_x, map->bound_y)) {
+	
+	if (map(map, check_loc.X, check_loc.Y) == 'x') {
 		Print_Slow(MOVE_VALID_2, 100);
 		return false;
 	}
+
 	return true;
 }
 
 void Move_CommandCheck (char* cmd, PLAYER* p, MAP* map) {
 	COORD temp_loc = p->LOCATION;
 	
-	strlwr(cmd);
-	
-	if (Move_Direction(cmd, "up")) {
+	if (Move_Direction(cmd, 'u', 'U')) { //Up
 		temp_loc.Y++;
-	} else if (Move_Direction(cmd, "down")) {
+	} else if (Move_Direction(cmd, 'd', 'D')) { //Down
 		temp_loc.Y--;
-	} else if (Move_Direction(cmd, "left")) {
+	} else if (Move_Direction(cmd, 'l', 'L')) { //Left
 		temp_loc.X--;
-	} else if (Move_Direction(cmd, "right")) {
+	} else if (Move_Direction(cmd, 'r', 'R')) { //Right
 		temp_loc.X++;
 	} else {
 		puts(MOVE_CHECK);
@@ -438,13 +488,14 @@ void Initialization () {
 	Game_Console_Setting();
 	Game_Event_Random_Initialization();
 	Battle_Action_Initialization();
+	CreateThread(NULL, 0, State_Input, NULL, 0, 0);
 }
 
 //Main
 int main() {
 	MAP map;
 	PLAYER player = {10, 10, 3, 0, 0, {0, 0}, false}; //HP, MP, ATK, DEF, KEY, LOCATION(X, Y), GAME_OVER
-	char userInput[100];
+	char userInput;
 
 	Initialization();
 	Map_Create_Macro((&map), 5, 5, {{'x', '0', '0', '0', '0'},
@@ -452,16 +503,16 @@ int main() {
 															{'x', '0', '0', 'K', 'x'},
 															{'x', '0', 'x', 'x', '?'},
 															{'0', '0', '0', '0', '0'}});
-	Game_Start("Search");
+	Game_Start();
 	Game_Description();
 	
 	Map_Print(player.LOCATION, &map);
 	
 	Move_Description();
 	while (player.GAME_OVER == false) {
-		Move_GetUserInput(userInput);
+		Move_GetUserInput(&userInput);
 		Game_Console_Scroll();
-		Move_CommandCheck(userInput, &player, &map);
+		Move_CommandCheck(&userInput, &player, &map);
 		Map_Print(player.LOCATION, &map);
 	}
 	Map_Clear(&map);

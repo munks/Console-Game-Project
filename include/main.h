@@ -6,6 +6,7 @@
 	
 	//Include Standard
 	#include <stdio.h>
+	#include <conio.h>
 	#include <stdlib.h>
 	#include <string.h>
 	#include <time.h>
@@ -43,6 +44,21 @@
 		short bound_y;
 	} MAP;
 	
+	//Global Elements
+	extern int State_Flag;
+	#define State_Flag_On(s)		(State_Flag |= s) //void
+	#define State_Flag_Off(s)		(State_Flag &= ~s) //void
+	#define State_Flag_Switch(s)	(State_Flag *= s) //void
+	#define State_Flag_Check(s)		(State_Flag & s) //bool
+	
+	#define State_Print_Skip	(1 << 0)
+	#define State_Input_Start	(1 << 1)
+	#define State_Input_Move	(1 << 2)
+	#define State_Input_Battle	(1 << 3)
+	
+	#define Get_Global_Input(s) State_Flag_Off(s); while (!State_Flag_Check(s)) { Sleep(1); }
+	#define Set_Global_Input(v, t) (*v) = (t)Global_Input
+	
 	void Print_Slow (const char* str, int delay); //Print 'str' one character at each 'delay' millisecond
 	#define Printf_Slow(s, d, ...) {char *tempStr = (char*)calloc(strlen(s) + 20, sizeof(char)); \
 													sprintf(tempStr, s, __VA_ARGS__); \
@@ -65,7 +81,7 @@
 	//Game Elements
 	void Game_Console_Setting (); //Set Console Property
 	void Game_Console_Scroll (); //Console Scrolling
-	void Game_Start (const char* cmd); //Game Start with 'cmd' Command
+	void Game_Start (); //Game Start with 's' Command
 	void Game_Description (); //Print Game's Description
 	
 	void Game_Event_Random (PLAYER* p, MAP* map); //Decide Game Random Event - map '?'
@@ -95,7 +111,7 @@
 	void Map_Clear (MAP* map); //Clean Map Memory Allocation
 	
 	//Move Elements
-	#define Move_Direction(cmd, dir) (strcmp(cmd, dir) == 0) //Check Direction (up, down, left, right)
+	#define Move_Direction(cmd, us, ls) ((*cmd == us) || (*cmd == ls)) //Check Direction (up, down, left, right)
 	#define Move_LocationInBoundary(loc_x, loc_y, bound_x, bound_y) (loc_x >= 0 && loc_x <= (bound_x - 1) && loc_y >= 0 && loc_y <= (bound_y - 1)) //Check Location Is In Boundary
 	
 	void Move_Description (); //Print Moving Tooltip
