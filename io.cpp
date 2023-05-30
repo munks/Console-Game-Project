@@ -30,16 +30,16 @@ void Input_Process (unsigned char input, bool special) {
 		//Game Start Input Confirm
 		case 's':
 		case 'S': {
-			State_Flag_On(State_Input_Start);
-			break;
+			if (!State_Flag_Check(State_Input_Start)) {
+				State_Flag_On(State_Input_Start);
+				break;
+			}
 		}
 		//move Input Confirm
-		case 'l':
-		case 'L':
-		case 'r':
-		case 'R':
-		case 'u':
-		case 'U':
+		case 'w':
+		case 'W':
+		case 'a':
+		case 'A':
 		case 'd':
 		case 'D': {
 			State_Flag_On(State_Input_Move);

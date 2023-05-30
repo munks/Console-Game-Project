@@ -13,39 +13,39 @@ void Move_GetUserInput (char* output) {
 
 bool Move_LocationValid (COORD check_loc, MAP* map) {
 	if (!Move_LocationInBoundary(check_loc.X, check_loc.Y, map->bound_x, map->bound_y)) {
-		Print_Slow(MOVE_VALID_1, 100);
+		printf(MOVE_VALID_1);
 		return false;
 	}
 	
 	if (map(map, check_loc.X, check_loc.Y) == 'x') {
-		Print_Slow(MOVE_VALID_2, 100);
+		printf(MOVE_VALID_2);
 		return false;
 	}
 
 	return true;
 }
 
-void Move_CommandCheck (char* cmd, PLAYER* p, MAP* map) {
+void Move_CommandCheck (char* cmd, PLAYER* p) {
 	COORD temp_loc = p->LOCATION;
 	
-	if (Move_Direction(cmd, 'u', 'U')) { //Up
+	if (Move_Direction(cmd, 'w', 'W')) { //Up
 		temp_loc.Y++;
-	} else if (Move_Direction(cmd, 'd', 'D')) { //Down
+	} else if (Move_Direction(cmd, 's', 'S')) { //Down
 		temp_loc.Y--;
-	} else if (Move_Direction(cmd, 'l', 'L')) { //Left
+	} else if (Move_Direction(cmd, 'a', 'A')) { //Left
 		temp_loc.X--;
-	} else if (Move_Direction(cmd, 'r', 'R')) { //Right
+	} else if (Move_Direction(cmd, 'd', 'D')) { //Right
 		temp_loc.X++;
 	} else {
 		puts(MOVE_CHECK);
 		return;
 	}
 	
-	if (!Move_LocationValid(temp_loc, map)) {
+	if (!Move_LocationValid(temp_loc, p->CURRENT_MAP)) {
 		return;
 	}
 	
 	p->LOCATION = temp_loc; //Overwrite Player Location From Temp Location
 	
-	Map_EventExecute(p, map);
+	Map_EventExecute(p);
 }

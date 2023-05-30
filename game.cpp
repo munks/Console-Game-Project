@@ -122,29 +122,57 @@ void Game_Event_Random_Initialization () {
 	Game_Event_Random_Function[3] = Game_Event_Random_Nothing;
 }
 
-void Game_Event_Random (PLAYER* p, MAP* map) {
+void Game_Event_Random (PLAYER* p) {
 	srand(time(NULL));
 	Game_Event_Random_Function[rand() % 4](p);
 	
-	map(map, p->LOCATION.X, p->LOCATION.Y) = 'x'; //Room Collapsing
+	map(p->CURRENT_MAP, p->LOCATION.X, p->LOCATION.Y) = 'x'; //Room Collapsing
+}
+
+bool Location_Compare(COORD loc, short x, short y) {
+	COORD temp = {x, y};
+	
+	return memcmp(&loc, &temp, sizeof(COORD)) == 0;
 }
 
 void Game_Event_OpenDoor (PLAYER* p) {
-	if (p->KEY > 0) { // If key > 0 (Door Open)
-		Print_Slow(EVENT_DOOR_1, 100);
-		Print_Slow(EVENT_DOOR_2, 100);
-		p->GAME_OVER = true;
-	} else { // key <= 0
-		Print_Slow(EVENT_DOOR_FAIL, 100);
+	if (p->CURRENT_MAP == &map_kitchen) { //Kitchen to Mainhole
+		Map_MoveToRoom(p, &map_mainhole, (COORD){3,0});
+	} else if (p->CURRENT_MAP == &map_safe) { //Safe to Mainhole
+		Map_MoveToRoom(p, &map_mainhole, (COORD){0,3});
+	} else if (p->CURRENT_MAP == &map_bedroom) { //Bedroom to Mainhole
+		Map_MoveToRoom(p, &map_mainhole, (COORD){6,3});
+	} else if (p->CURRENT_MAP == &map_mainhole) { //Main hole to other rooms
+		if (Location_Compare(p->LOCATION, 0, 3)) {
+			Map_MoveToRoom(p, &map_safe, (COORD){6,3});
+		} else if (Location_Compare(p->LOCATION, 6, 3)) {
+			Map_MoveToRoom(p, &map_bedroom, (COORD){0,3});
+		} else if (Location_Compare(p->LOCATION, 3, 0)) {
+			Map_MoveToRoom(p, &map_kitchen, (COORD){3,6});
+		} else if (Location_Compare(p->LOCATION, 3, 6)) {
+			Map_MoveToRoom(p, &map_exit, (COORD){3,0});
+		}
+	} else if (p->CURRENT_MAP == &map_exit) { //Exit to Mainhole/Escape
+		if (Location_Compare(p->LOCATION, 3, 0)) {
+			Map_MoveToRoom(p, &map_mainhole, (COORD){3,6});
+		} else {
+			if (p->KEY == c_escapeKeyCount) { // If key == 14 (Door Open)
+				Print_Slow(EVENT_DOOR_1, 100);
+				Print_Slow(EVENT_DOOR_2, 100);
+				p->GAME_OVER = true;
+			} else { // key <= 0
+				Print_Slow(EVENT_DOOR_FAIL, 100);
+			}
+		}
 	}
 }
 
-void Game_Event_FindKey (PLAYER* p, MAP* map) {
-	Print_Slow(EVENT_KEY, 100);
+void Game_Event_FindKey (PLAYER* p) {
+	printf(EVENT_KEY);
 	p->KEY++;
-	map(map, p->LOCATION.X, p->LOCATION.Y) = '0';
+	map(p->CURRENT_MAP, p->LOCATION.X, p->LOCATION.Y) = '0';
 }
 
 void Game_Event_Default () {
-	Print_Slow(EVENT_DEFAULT, 100);
+	printf(EVENT_DEFAULT);
 }
