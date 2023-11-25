@@ -161,7 +161,7 @@ void Game_Event_OpenDoor (PLAYER* p) {
 				Print_Slow(EVENT_DOOR_2, 100);
 				p->GAME_OVER = true;
 			} else { // key <= 0
-				Print_Slow(EVENT_DOOR_FAIL, 100);
+				printf(EVENT_DOOR_FAIL);
 			}
 		}
 	}

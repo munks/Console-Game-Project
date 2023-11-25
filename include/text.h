@@ -71,7 +71,7 @@
 //void Game_Event_OpenDoor (PLAYER* p);
 #define EVENT_DOOR_1				"The key just fit to the door keyhole!\n"
 #define EVENT_DOOR_2				"You escape from that dungeon!\n\n"
-#define EVENT_DOOR_FAIL				"You don't have all keys. so you cannot get out from here!\n"
+#define EVENT_DOOR_FAIL				"You don't have all keys. so you cannot get out from here!\n\n"
 
 //void Game_Event_FindKey (PLAYER* p);
 #define EVENT_KEY					"You found the key!\n\n"
