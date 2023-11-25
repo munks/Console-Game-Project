@@ -1,6 +1,9 @@
 #include "global.h"
 
 //Move Elements
+#define Move_Direction(cmd, us, ls) ((*cmd == us) || (*cmd == ls)) //Check Direction (up, down, left, right)
+#define Move_LocationInBoundary(loc_x, loc_y, bound_x, bound_y) (loc_x >= 0 && loc_x <= (bound_x - 1) && loc_y >= 0 && loc_y <= (bound_y - 1))	//Check Location Is In Boundary
+																
 void Move_Description () {
 	Print_Slow(MOVE_DESCRIPTION, 100);
 }
