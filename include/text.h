@@ -68,10 +68,10 @@
 #define BATTLE_HEAL_FAIL_1			"You don't have enoguh MP.\n"
 #define BATTLE_HEAL_FAIL_2			"Your MP is %d.\n" //%d(p->MP)
 
-//void Game_Event_OpenDoor (PLAYER* p);
-#define EVENT_DOOR_1				"The key just fit to the door keyhole!\n"
-#define EVENT_DOOR_2				"You escape from that dungeon!\n\n"
-#define EVENT_DOOR_FAIL				"You don't have all keys. so you cannot get out from here!\n\n"
+//void Game_Event_OpenExit (PLAYER* p);
+#define EVENT_EXIT_1				"The key just fit to the door keyhole!\n"
+#define EVENT_EXIT_2				"You escape from that dungeon!\n\n"
+#define EVENT_EXIT_FAIL				"You don't have all keys. so you cannot get out from here!\n\n"
 
 //void Game_Event_FindKey (PLAYER* p);
 #define EVENT_KEY					"You found the key!\n\n"
@@ -80,4 +80,5 @@
 #define EVENT_DEFAULT				"You walk to another place.\n\n"
 
 //void Map_MoveToRoom (PLAYER* p, MAP* map, COORD loc);
+#define MAP_DOOR_FAIL				"The door is locked.\n\n"
 #define MAP_MOVE					"You moved to %s.\n\n"

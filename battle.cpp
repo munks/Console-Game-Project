@@ -72,8 +72,8 @@ void Battle_Action_Initialization () {
 void Battle_GetUserInput (int* act) {
 	Print_Slow(BATTLE_INPUT_1, 10); //Execution is 0, 1, 2
 	
-	Get_Global_Input(State_Input_Battle);
-	Set_Global_Input(act, int);
+	Wait_Global_Input(State_Input_Battle);
+	Get_Global_Input(act, int);
 	
 	*act -= 0x31; //Command('1','2','3') To Act(0,1,2)
 }

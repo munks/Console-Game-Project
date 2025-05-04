@@ -41,7 +41,7 @@ void Game_Start () {
 	Print_Slow(GAME_START_1, 100);
 	Print_Slow(GAME_START_2, 100);
 	
-	Get_Global_Input(State_Input_Start); //Get 's' Input
+	Wait_Global_Input(State_Input_Start_End); //Get 's' Input
 	
 	printf(GAME_START_3);
 	Sleep(1000);
@@ -135,35 +135,14 @@ bool Location_Compare(COORD loc, short x, short y) {
 	return memcmp(&loc, &temp, sizeof(COORD)) == 0;
 }
 
-void Game_Event_OpenDoor (PLAYER* p) {
-	if (p->CURRENT_MAP == &map_kitchen) { //Kitchen to Mainhole
-		Map_MoveToRoom(p, &map_mainhole, (COORD){3,0});
-	} else if (p->CURRENT_MAP == &map_safe) { //Safe to Mainhole
-		Map_MoveToRoom(p, &map_mainhole, (COORD){0,3});
-	} else if (p->CURRENT_MAP == &map_bedroom) { //Bedroom to Mainhole
-		Map_MoveToRoom(p, &map_mainhole, (COORD){6,3});
-	} else if (p->CURRENT_MAP == &map_mainhole) { //Main hole to other rooms
-		if (Location_Compare(p->LOCATION, 0, 3)) {
-			Map_MoveToRoom(p, &map_safe, (COORD){6,3});
-		} else if (Location_Compare(p->LOCATION, 6, 3)) {
-			Map_MoveToRoom(p, &map_bedroom, (COORD){0,3});
-		} else if (Location_Compare(p->LOCATION, 3, 0)) {
-			Map_MoveToRoom(p, &map_kitchen, (COORD){3,6});
-		} else if (Location_Compare(p->LOCATION, 3, 6)) {
-			Map_MoveToRoom(p, &map_exit, (COORD){3,0});
-		}
-	} else if (p->CURRENT_MAP == &map_exit) { //Exit to Mainhole/Escape
-		if (Location_Compare(p->LOCATION, 3, 0)) {
-			Map_MoveToRoom(p, &map_mainhole, (COORD){3,6});
-		} else {
-			if (p->KEY == c_escapeKeyCount) { // If key == 14 (Door Open)
-				Print_Slow(EVENT_DOOR_1, 100);
-				Print_Slow(EVENT_DOOR_2, 100);
-				p->GAME_OVER = true;
-			} else { // key <= 0
-				printf(EVENT_DOOR_FAIL);
-			}
-		}
+void Game_Event_OpenExit (PLAYER* p) {
+	if (p->KEY == c_escapeKeyCount) { // If key == 14 (Door Open)
+		Print_Slow(EVENT_EXIT_1, 100);
+		Print_Slow(EVENT_EXIT_2, 100);
+		p->GAME_OVER = true;
+		Wait_Global_Input(State_Input_Start_End);
+	} else { // key <= 0
+		printf(EVENT_EXIT_FAIL);
 	}
 }
 

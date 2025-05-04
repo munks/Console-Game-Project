@@ -29,6 +29,5 @@ int main() {
 	}
 	Map_Clear();
 	
-	system("pause");
 	return 0;
 }

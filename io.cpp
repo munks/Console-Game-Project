@@ -27,13 +27,11 @@ void Input_Process (unsigned char input, bool special) {
 			State_Flag_On(State_Input_Battle);
 			break;
 		}
-		//Game Start Input Confirm
+		//Game Start/End Input Confirm
 		case 's':
 		case 'S': {
-			if (!State_Flag_Check(State_Input_Start)) {
-				State_Flag_On(State_Input_Start);
-				break;
-			}
+			State_Flag_On(State_Input_Start_End);
+			break;
 		}
 		//move Input Confirm
 		case 'w':

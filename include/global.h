@@ -18,21 +18,27 @@
 #define State_Flag_Check(s)		(State_Flag & s) //bool
 
 #define State_Print_Skip	(1 << 0)
-#define State_Input_Start	(1 << 1)
+#define State_Input_Start_End	(1 << 1)
 #define State_Input_Move	(1 << 2)
 #define State_Input_Battle	(1 << 3)
 
-#define Get_Global_Input(s) State_Flag_Off(s); while (!State_Flag_Check(s)) { Sleep(1); }
-#define Set_Global_Input(v, t) (*v) = (t)Global_Input
+#define Wait_Global_Input(s) State_Flag_Off(s); while (!State_Flag_Check(s)) { Sleep(1); }
+#define Get_Global_Input(v, t) (*v) = (t)Global_Input
 
 #define c_escapeKeyCount 14
 
 //Structure
+
+typedef struct MOVEINFO { //MOVEDATA
+	char door;
+	MAP* connect[2];
+	COORD dest[2];
+} MOVEINFO;
+
 typedef struct MAP { //Map Data
 	char** map;
 	bool** reveal;
-	short bound_x;
-	short bound_y;
+	COORD bound;
 	char* map_name;
 } MAP;
 

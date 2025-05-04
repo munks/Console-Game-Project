@@ -16,6 +16,6 @@ void Game_Event_Random_Nothing (PLAYER* p);			//Game Random Event (Nothing)
 
 void Game_Event_Random_Initialization ();			//Inits 'Game_RandomEvent_Function' Variable
 
-void Game_Event_OpenDoor (PLAYER* p);				//Open Door Event - map '@'
+void Game_Event_OpenExit (PLAYER* p);				//Open Door Event - map '@'
 void Game_Event_FindKey (PLAYER* p);				//Find Key Event - map 'k'
 void Game_Event_Default ();							//Default Event - map -'0'

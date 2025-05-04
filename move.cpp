@@ -10,12 +10,12 @@ void Move_Description () {
 
 void Move_GetUserInput (char* output) {
 	printf(MOVE_INPUT);
-	Get_Global_Input(State_Input_Move);
-	Set_Global_Input(output, char);
+	Wait_Global_Input(State_Input_Move);
+	Get_Global_Input(output, char);
 }
 
 bool Move_LocationValid (COORD check_loc, MAP* map) {
-	if (!Move_LocationInBoundary(check_loc.X, check_loc.Y, map->bound_x, map->bound_y)) {
+	if (!Move_LocationInBoundary(check_loc.X, check_loc.Y, map->bound.X, map->bound.Y)) {
 		printf(MOVE_VALID_1);
 		return false;
 	}
