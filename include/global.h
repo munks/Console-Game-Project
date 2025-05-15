@@ -29,18 +29,18 @@
 
 //Structure
 
-typedef struct MOVEINFO { //MOVEDATA
-	char door;
-	MAP* connect[2];
-	COORD dest[2];
-} MOVEINFO;
-
 typedef struct MAP { //Map Data
 	char** map;
 	bool** reveal;
 	COORD bound;
 	char* map_name;
 } MAP;
+
+typedef struct MOVEINFO { //MOVEDATA
+	char door;
+	MAP* connect[2];
+	COORD dest[2];
+} MOVEINFO;
 
 typedef struct PLAYER {	//Player Data
 	int HP;

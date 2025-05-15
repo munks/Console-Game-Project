@@ -30,8 +30,10 @@ void Input_Process (unsigned char input, bool special) {
 		//Game Start/End Input Confirm
 		case 's':
 		case 'S': {
-			State_Flag_On(State_Input_Start_End);
-			break;
+			if (!State_Flag_Check(State_Input_Start_End)) {
+				State_Flag_On(State_Input_Start_End);
+				break;
+			}
 		}
 		//move Input Confirm
 		case 'w':

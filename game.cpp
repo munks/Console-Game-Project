@@ -126,7 +126,7 @@ void Game_Event_Random (PLAYER* p) {
 	srand(time(NULL));
 	Game_Event_Random_Function[rand() % 4](p);
 	
-	map(p->CURRENT_MAP, p->LOCATION.X, p->LOCATION.Y) = 'x'; //Room Collapsing
+	map(p->CURRENT_MAP, p->LOCATION.X, p->LOCATION.Y) = '0'; //Room Collapsing
 }
 
 bool Location_Compare(COORD loc, short x, short y) {

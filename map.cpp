@@ -100,9 +100,9 @@ void Map_Print (PLAYER* p) {
 		if (y == map->bound.Y - 1) {
 			printf("    Keys %d/%d\n", p->KEY, c_escapeKeyCount);
 		} else if (y == map->bound.Y - 2) {
-			printf("    HP: %d, MP: %d", p->HP, p->MP);
+			printf("    HP: %d, MP: %d\n", p->HP, p->MP);
 		} else if (y == map->bound.Y - 3) {
-			printf("    ATK: %d, DEF: %d", p->ATK, p->DEF);
+			printf("    ATK: %d, DEF: %d\n", p->ATK, p->DEF);
 		} else {
 			puts("");
 		}
@@ -136,7 +136,6 @@ void Map_FindConnectedRoom (PLAYER *p, char door) {
 	int idx;
 	MAP* map = NULL;
 	COORD dest;
-	
 	for (i = 0; i < move_info_cnt; i++) {
 		if (move_info[i].door == door) {
 			idx = p->CURRENT_MAP == move_info[i].connect[0] ? 1 : 0;
@@ -145,6 +144,7 @@ void Map_FindConnectedRoom (PLAYER *p, char door) {
 			break;
 		}
 	}
+	printf("Map: %s, Target: %s\n", p->CURRENT_MAP->map_name, map->map_name);
 	Map_MoveToRoom(p, map, dest);
 }
 
@@ -216,19 +216,22 @@ void Map_MoveToRoom (PLAYER* p, MAP* map, COORD loc) {
 
 void Map_DoorConnectionCheck (MAP* map) {
 	int idx;
+	int k;
 	
-	for (int i = 0; i < x; i++) { //Door Connection Check
-		for (int j = 0; j < y; j++) {
-			if ((map->map[i][j] >= 0) && (map->map[i][j] <= 31)) {
+	for (int i = 0; i < map->bound.X; i++) { //Door Connection Check
+		for (int j = 0; j < map->bound.Y; j++) {
+			if ((map(map, i, j) >= 0) && (map(map, i, j) <= 31)) {
 				for (k = 0; k < move_info_cnt; k++) {
-					if (move_info[k].door == map->map[i][j]) { break; }
+					if (move_info[k].door == map(map, i, j)) {
+						break;
+					}
 				}
-				if (move_info_cnt < k) {
+				if (move_info_cnt <= k) {
 					move_info = (MOVEINFO*)realloc(move_info, sizeof(MOVEINFO) * (k + 1));
 					move_info_cnt++;
 					
-					memset(move_info[k], 0, sizeof(MOVEINFO));
-					move_info[k].door = map->map[i][j];
+					memset(&(move_info[k]), 0, sizeof(MOVEINFO));
+					move_info[k].door = map(map, i, j);
 					idx = 0;
 				} else {
 					idx = 1;
@@ -289,4 +292,7 @@ void Map_Create_Initialization () { //Map Must be over 3x3 size
 								   {'x','0','0','0','0','0','x'},
 								   {'x','x','x', 3 ,'x','x','x'}});
 	Map_DoorConnectionCheck(&map_exit);
+	for (int k = 0; k < move_info_cnt; k++) {
+		printf("MOVEINFO %d: MAP - %s, %s/ DEST - (%d, %d), (%d, %d)\n", k, move_info[k].connect[0]->map_name, move_info[k].connect[1]->map_name, move_info[k].dest[0].X, move_info[k].dest[0].Y, move_info[k].dest[1].X, move_info[k].dest[1].Y);
+	}
 }
